@@ -1,0 +1,152 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "motion-calendar",
+  "title": "Motion Calendar",
+  "description": "Manage usemotion.com tasks and projects",
+  "icon": "extension-icon.png",
+  "author": "colleserre",
+  "platforms": [
+    "macOS",
+    "Windows"
+  ],
+  "categories": [
+    "Productivity"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "view-today",
+      "title": "View Today's Tasks",
+      "subtitle": "Motion",
+      "description": "View all tasks scheduled for today",
+      "mode": "view"
+    },
+    {
+      "name": "view-tomorrow",
+      "title": "View Tomorrow's Tasks",
+      "subtitle": "Motion",
+      "description": "View all tasks scheduled for tomorrow",
+      "mode": "view"
+    },
+    {
+      "name": "view-week",
+      "title": "View This Week's Tasks",
+      "subtitle": "Motion",
+      "description": "View all tasks scheduled for this week",
+      "mode": "view"
+    },
+    {
+      "name": "search-tasks",
+      "title": "Search Tasks",
+      "subtitle": "Motion",
+      "description": "Search for tasks by name",
+      "mode": "view"
+    },
+    {
+      "name": "create-task",
+      "title": "Create Task",
+      "subtitle": "Motion",
+      "description": "Create a new task in Motion",
+      "mode": "view"
+    },
+    {
+      "name": "open-calendar",
+      "title": "Open Motion Calendar",
+      "subtitle": "Motion",
+      "description": "Open Motion calendar in your browser",
+      "mode": "no-view"
+    },
+    {
+      "name": "preferences",
+      "title": "Motion Preferences",
+      "subtitle": "Configure API key",
+      "description": "Configure your Motion API key",
+      "mode": "view"
+    }
+  ],
+  "tools": [
+    {
+      "name": "list-tasks-today",
+      "title": "List Today's Tasks",
+      "description": "Retrieves all tasks scheduled for today from Motion. Checks chunks array (actual scheduled time blocks) first - if any chunk's scheduledStart is today, the task is included. Falls back to task.scheduledStart, then task.dueDate if no chunks. Returns task details including name, priority, status, project, and chunks array with scheduled times. Use this to see what tasks are scheduled for today.",
+      "mode": "no-view",
+      "handler": "src/tools/list-tasks-today.ts"
+    },
+    {
+      "name": "list-tasks-tomorrow",
+      "title": "List Tomorrow's Tasks",
+      "description": "Retrieves all tasks scheduled for tomorrow from Motion. Checks chunks array (actual scheduled time blocks) first - if any chunk's scheduledStart is tomorrow, the task is included. Falls back to task.scheduledStart, then task.dueDate if no chunks. Returns task details including name, priority, status, project, and chunks array with scheduled times. Use this to see what tasks are scheduled for tomorrow.",
+      "mode": "no-view",
+      "handler": "src/tools/list-tasks-tomorrow.ts"
+    },
+    {
+      "name": "list-tasks-next-week",
+      "title": "List Next Week's Tasks",
+      "description": "Retrieves all tasks scheduled for next week (Monday to Sunday) from Motion. Checks chunks array (actual scheduled time blocks) first - if any chunk's scheduledStart falls within next week, the task is included. Falls back to task.scheduledStart, then task.dueDate if no chunks. Returns task details including name, priority, status, project, and chunks array with scheduled times. Use this to see what tasks are scheduled for next week.",
+      "mode": "no-view",
+      "handler": "src/tools/list-tasks-next-week.ts"
+    },
+    {
+      "name": "search-tasks-tool",
+      "title": "Search Tasks",
+      "description": "Searches for tasks in Motion by name (case-insensitive). Provide a search query string as the 'query' parameter. Returns matching tasks with their details including ID, name, priority, status, project, and due date. Use this to find specific tasks by name.",
+      "mode": "no-view",
+      "handler": "src/tools/search-tasks-tool.ts"
+    },
+    {
+      "name": "get-workspaces",
+      "title": "Get Workspaces",
+      "description": "Retrieves all available workspaces from Motion. Returns a list of workspaces with their IDs and names. Use this tool BEFORE creating tasks to get the correct workspaceId. Required before using create-task-tool if you need to specify a workspace.",
+      "mode": "no-view",
+      "handler": "src/tools/get-workspaces.ts"
+    },
+    {
+      "name": "get-projects",
+      "title": "Get Projects",
+      "description": "Retrieves all projects for a specific workspace from Motion. Required parameter: 'workspaceId' (string) - the workspace ID. Returns a list of projects with their IDs, names, and descriptions. Use this tool BEFORE creating tasks to get the correct projectId. Use get-workspaces first to get the workspaceId, then use this tool to get projects for that workspace.",
+      "mode": "no-view",
+      "handler": "src/tools/get-projects.ts"
+    },
+    {
+      "name": "create-task-tool",
+      "title": "Create Task",
+      "description": "Creates a new task in Motion with autoscheduling ALWAYS enabled. IMPORTANT: Before using this tool, you MUST first call get-workspaces to retrieve available workspace IDs, and if you want to assign a project, call get-projects with the workspaceId to get available project IDs. This tool will validate workspaceId and projectId and return helpful error messages if they are invalid. All tasks are automatically scheduled by Motion's AI scheduler. Required parameters: 'name' (string) - the task name; 'dueDate' (string) - REQUIRED, date in YYYY-MM-DD format (e.g., 2024-12-25) - sets HARD deadline for autoscheduling. Optional parameters: 'workspaceId' (string) - workspace ID from get-workspaces tool (if not provided, uses first available workspace); 'duration' (string) - duration in minutes as a string (e.g., '30') or 'NONE' or 'REMINDER' (default: 30 minutes if not provided); 'priority' (string) - one of: ASAP, HIGH, MEDIUM, LOW (default: MEDIUM); 'description' (string) - task description; 'projectId' (string) - project ID from get-projects tool to associate task with. Returns the created task with its ID and a URL to open it in Motion.",
+      "mode": "no-view",
+      "handler": "src/tools/create-task-tool.ts"
+    },
+    {
+      "name": "get-task-details",
+      "title": "Get Task Details",
+      "description": "Retrieves detailed information about a specific Motion task by its ID. Required parameter: 'taskId' (string) - the task ID in format 'tk_...' (e.g., tk_abc123). Returns full task information including description, due date, status, priority, assignees, project details, labels, and scheduling information. Use this to get complete details about a specific task.",
+      "mode": "no-view",
+      "handler": "src/tools/get-task-details.ts"
+    },
+    {
+      "name": "filter-tasks",
+      "title": "Filter Tasks",
+      "description": "Filters and searches tasks in Motion by various criteria. Use this to answer questions like 'what's high priority for this week' or 'show me all tasks scheduled this month'. Date filtering uses chunks array (actual scheduled time blocks) - checks if any chunk's scheduledStart falls within the date range. Falls back to task.scheduledStart, then task.dueDate if no chunks. Optional parameters: 'priority' (string) - one of: ASAP, HIGH, MEDIUM, LOW; 'dateRange' (string) - one of: today, thisWeek, nextWeek, thisMonth, nextMonth (filters by scheduled chunks); 'status' (string) - task status name; 'workspaceId' (string) - filter by workspace; 'projectId' (string) - filter by project; 'label' (string) - filter by label; 'name' (string) - search by task name. Returns matching tasks with their details including chunks array with scheduledStart/scheduledEnd for each time block. Use this for complex queries combining multiple filters.",
+      "mode": "no-view",
+      "handler": "src/tools/filter-tasks.ts"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.104.4",
+    "@raycast/utils": "^1.17.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.0.4",
+    "@types/node": "22.13.10",
+    "@types/react": "19.0.10",
+    "eslint": "^9.22.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}
